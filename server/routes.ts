@@ -241,22 +241,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let syncedCount = 0;
       
       for (const shopifyProduct of products) {
-        // Format product data according to our schema
-        const productData = {
-          shopifyId: shopifyProduct.id,
-          title: shopifyProduct.title,
-          description: shopifyProduct.body_html || '',
-          price: parseFloat(shopifyProduct.variants[0]?.price || '0') * 100, // Convert to cents
-          compareAtPrice: shopifyProduct.variants[0]?.compare_at_price ? 
-            parseFloat(shopifyProduct.variants[0].compare_at_price) * 100 : 
-            undefined,
-          imageUrl: shopifyProduct.images[0]?.src || '',
-          productUrl: `https://${process.env.SHOPIFY_SHOP_NAME}.myshopify.com/products/${shopifyProduct.handle}`,
-          category: shopifyProduct.product_type || '',
-          tags: shopifyProduct.tags ? shopifyProduct.tags.split(',').map((t: string) => t.trim()) : [],
-          vendor: shopifyProduct.vendor || '',
-          inventory: shopifyProduct.variants[0]?.inventory_quantity || 0
-        };
+        // Format product data using our helper method
+        const productData = shopifyClient.convertToStorageFormat(shopifyProduct);
         
         // Check if product already exists
         const existingProduct = await storage.getProductByShopifyId(shopifyProduct.id);

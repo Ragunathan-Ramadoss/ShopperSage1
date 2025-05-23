@@ -119,6 +119,26 @@ export class ShopifyClient {
       product_url: `https://${this.shopName}.myshopify.com/products/${product.handle}`,
     };
   }
+  
+  // Method to convert Shopify product to our internal format for storage
+  convertToStorageFormat(shopifyProduct: ShopifyProduct): any {
+    const mainVariant = shopifyProduct.variants[0] || {};
+    const mainImage = shopifyProduct.images[0] || {};
+    
+    return {
+      shopifyId: shopifyProduct.id,
+      title: shopifyProduct.title,
+      description: shopifyProduct.description || '',
+      price: parseFloat(mainVariant.price || '0') * 100, // Convert to cents
+      compareAtPrice: mainVariant.compare_at_price ? parseFloat(mainVariant.compare_at_price) * 100 : undefined,
+      imageUrl: mainImage.src || '',
+      productUrl: `https://${this.shopName}.myshopify.com/products/${shopifyProduct.handle}`,
+      category: shopifyProduct.product_type || '',
+      tags: Array.isArray(shopifyProduct.tags) ? shopifyProduct.tags : shopifyProduct.tags ? shopifyProduct.tags.split(',').map(t => t.trim()) : [],
+      vendor: shopifyProduct.vendor || '',
+      inventory: mainVariant.inventory_quantity || 0
+    };
+  }
 }
 
 // Create and export a singleton instance
