@@ -264,17 +264,17 @@ export default function ChatbotPrototype() {
         
       case 'products':
         return (
-          <div>
+          <div className="w-full">
             <p className="text-sm mb-3">{message.text}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+            <div className="flex flex-col gap-3 mt-2">
               {message.products?.map(product => (
-                <Card key={product.id} className="overflow-hidden border border-neutral-200 dark:border-neutral-700">
+                <Card key={product.id} className="overflow-hidden border border-neutral-200 dark:border-neutral-700 w-full">
                   <div className="flex p-2">
-                    <div className="w-20 h-20 flex-shrink-0 mr-3 bg-neutral-100 dark:bg-neutral-800 rounded-md overflow-hidden">
+                    <div className="w-16 h-16 flex-shrink-0 mr-3 bg-neutral-100 dark:bg-neutral-800 rounded-md overflow-hidden">
                       <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                     </div>
-                    <div className="flex flex-col flex-grow">
-                      <h4 className="font-medium text-sm text-neutral-900 dark:text-white">{product.name}</h4>
+                    <div className="flex flex-col flex-grow min-w-0">
+                      <h4 className="font-medium text-sm text-neutral-900 dark:text-white truncate">{product.name}</h4>
                       <p className="text-sm text-neutral-600 dark:text-neutral-300">${product.price.toFixed(2)}</p>
                       
                       {product.type && (
@@ -294,13 +294,13 @@ export default function ChatbotPrototype() {
                       )}
                       
                       {product.reason && (
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">{product.reason}</p>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 truncate">{product.reason}</p>
                       )}
                     </div>
                   </div>
                   <div className="bg-neutral-50 dark:bg-neutral-800 p-2 border-t border-neutral-200 dark:border-neutral-700">
                     <div className="flex justify-between items-center">
-                      <Button variant="ghost" size="sm" className="text-xs">View Details</Button>
+                      <Button variant="ghost" size="sm" className="text-xs">View</Button>
                       <Button size="sm" className="text-xs">Add to Cart</Button>
                     </div>
                   </div>
@@ -312,12 +312,12 @@ export default function ChatbotPrototype() {
         
       case 'order':
         return (
-          <div>
+          <div className="w-full">
             <p className="text-sm mb-3">{message.text}</p>
-            <Card className="p-3 border border-neutral-200 dark:border-neutral-700">
+            <Card className="p-3 border border-neutral-200 dark:border-neutral-700 w-full">
               <div className="mb-3 flex justify-between items-start">
-                <div>
-                  <h4 className="font-medium">Order #{message.order?.id}</h4>
+                <div className="min-w-0 flex-1 pr-2">
+                  <h4 className="font-medium truncate">Order #{message.order?.id}</h4>
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">
                     Placed on {message.order?.date.toLocaleDateString()}
                   </p>
@@ -338,8 +338,8 @@ export default function ChatbotPrototype() {
                     <div className="w-10 h-10 flex-shrink-0 mr-2 bg-neutral-100 dark:bg-neutral-800 rounded overflow-hidden">
                       <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover" />
                     </div>
-                    <div>
-                      <p className="font-medium">{item.product.name}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium truncate">{item.product.name}</p>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400">Qty: {item.quantity}</p>
                     </div>
                   </div>
@@ -349,20 +349,20 @@ export default function ChatbotPrototype() {
               {message.order?.status === 'shipped' && (
                 <div className="border-t border-neutral-200 dark:border-neutral-700 pt-2 mt-2">
                   <p className="text-sm font-medium">Tracking Information</p>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">
                     Tracking #: {message.order?.tracking}
                   </p>
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                    Estimated delivery: {message.order?.estimatedDelivery?.toLocaleDateString()}
+                    Delivery: {message.order?.estimatedDelivery?.toLocaleDateString()}
                   </p>
                   <div className="mt-2 flex justify-between">
                     <Button variant="outline" size="sm" className="text-xs">
                       <Package className="mr-1 h-3 w-3" />
-                      Track Package
+                      Track
                     </Button>
                     <Button variant="ghost" size="sm" className="text-xs">
                       <RotateCcw className="mr-1 h-3 w-3" />
-                      Return Items
+                      Return
                     </Button>
                   </div>
                 </div>
@@ -373,7 +373,7 @@ export default function ChatbotPrototype() {
         
       case 'buttons':
         return (
-          <div>
+          <div className="w-full">
             <p className="text-sm mb-3">{message.text}</p>
             <div className="flex flex-wrap gap-2">
               {message.buttons?.map((button, index) => (
@@ -487,12 +487,11 @@ export default function ChatbotPrototype() {
                   </div>
                   
                   <div className={`
-                    rounded-lg p-3
+                    rounded-lg p-3 w-full
                     ${message.sender === 'user' 
                       ? 'bg-primary text-white' 
                       : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'
                     }
-                    ${message.type !== 'text' ? 'max-w-[300px]' : ''}
                   `}>
                     {renderMessageContent(message)}
                   </div>
