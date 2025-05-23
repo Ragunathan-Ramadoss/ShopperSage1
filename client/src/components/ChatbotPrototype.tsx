@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Avatar } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Bot, User, ShoppingBag, Package, RotateCcw, Search, SendHorizontal, ArrowRight, ThumbsUp } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Bot, User, ShoppingBag, Package, RotateCcw, Search, SendHorizontal, ArrowRight, ThumbsUp, ShoppingCart, Home, HelpCircle } from 'lucide-react';
 
 // Interfaces for our chat component
 interface Message {
@@ -396,7 +397,7 @@ export default function ChatbotPrototype() {
   };
 
   return (
-    <div className="flex flex-col h-[600px] max-w-md mx-auto border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden bg-white dark:bg-neutral-900 shadow-lg">
+    <div className="flex flex-col h-[650px] max-w-md mx-auto border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden bg-white dark:bg-neutral-900 shadow-lg">
       {/* Chatbot header */}
       <div className="flex items-center p-4 border-b border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800">
         <Avatar className="h-8 w-8 mr-2 bg-primary">
@@ -406,112 +407,335 @@ export default function ChatbotPrototype() {
           <h3 className="font-medium text-sm">Shop Assistant</h3>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">Online</p>
         </div>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center space-x-1">
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
+            <ShoppingCart className="h-4 w-4" />
+          </Button>
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
             <ThumbsUp className="h-4 w-4" />
           </Button>
         </div>
       </div>
       
-      {/* Continue shopping banner (pick up where left off) */}
-      {showContinueShopping && (
-        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-100 dark:border-blue-800">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <ShoppingBag className="h-4 w-4 text-primary mr-2" />
-              <p className="text-xs text-neutral-700 dark:text-neutral-200">Continue your shopping journey?</p>
-            </div>
-            <Button 
-              size="sm" 
-              className="text-xs h-7"
-              onClick={handleContinueShopping}
-            >
-              Resume
-              <ArrowRight className="ml-1 h-3 w-3" />
-            </Button>
-          </div>
-        </div>
-      )}
-      
-      {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map(message => (
-          <div 
-            key={message.id} 
-            className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div className={`
-              flex max-w-[85%]
-              ${message.sender === 'user' 
-                ? 'flex-row-reverse' 
-                : 'flex-row'
-              }
-            `}>
-              <div className={`
-                flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center
-                ${message.sender === 'user' 
-                  ? 'ml-2 bg-primary' 
-                  : 'mr-2 bg-neutral-200 dark:bg-neutral-700'
-                }
-              `}>
-                {message.sender === 'user' 
-                  ? <User className="h-4 w-4 text-white" /> 
-                  : <Bot className="h-4 w-4 text-neutral-700 dark:text-neutral-200" />
-                }
-              </div>
-              
-              <div className={`
-                rounded-lg p-3
-                ${message.sender === 'user' 
-                  ? 'bg-primary text-white' 
-                  : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'
-                }
-                ${message.type !== 'text' ? 'max-w-[300px]' : ''}
-              `}>
-                {renderMessageContent(message)}
-              </div>
-            </div>
-          </div>
-        ))}
+      {/* Quick navigation tabs */}
+      <Tabs defaultValue="chat" className="w-full">
+        <TabsList className="grid w-full grid-cols-4 bg-neutral-100 dark:bg-neutral-800 rounded-none h-12">
+          <TabsTrigger value="chat" className="data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-900">
+            <Bot className="h-4 w-4 mr-1" />
+            <span className="text-xs">Chat</span>
+          </TabsTrigger>
+          <TabsTrigger value="products" className="data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-900">
+            <ShoppingBag className="h-4 w-4 mr-1" />
+            <span className="text-xs">Shop</span>
+          </TabsTrigger>
+          <TabsTrigger value="orders" className="data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-900">
+            <Package className="h-4 w-4 mr-1" />
+            <span className="text-xs">Orders</span>
+          </TabsTrigger>
+          <TabsTrigger value="help" className="data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-900">
+            <HelpCircle className="h-4 w-4 mr-1" />
+            <span className="text-xs">Help</span>
+          </TabsTrigger>
+        </TabsList>
         
-        {/* Bot is typing indicator */}
-        {isTyping && (
-          <div className="flex justify-start">
-            <div className="flex max-w-[85%] flex-row">
-              <div className="flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center mr-2 bg-neutral-200 dark:bg-neutral-700">
-                <Bot className="h-4 w-4 text-neutral-700 dark:text-neutral-200" />
+        <TabsContent value="chat" className="m-0 p-0 flex flex-col flex-1 h-full">
+          {/* Continue shopping banner (pick up where left off) */}
+          {showContinueShopping && (
+            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-100 dark:border-blue-800">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <ShoppingBag className="h-4 w-4 text-primary mr-2" />
+                  <p className="text-xs text-neutral-700 dark:text-neutral-200">Continue your shopping journey?</p>
+                </div>
+                <Button 
+                  size="sm" 
+                  className="text-xs h-7"
+                  onClick={handleContinueShopping}
+                >
+                  Resume
+                  <ArrowRight className="ml-1 h-3 w-3" />
+                </Button>
               </div>
-              <div className="rounded-lg p-3 bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100">
-                <div className="flex space-x-1">
-                  <div className="h-2 w-2 rounded-full bg-neutral-400 dark:bg-neutral-500 animate-bounce" style={{animationDelay: '0ms'}}></div>
-                  <div className="h-2 w-2 rounded-full bg-neutral-400 dark:bg-neutral-500 animate-bounce" style={{animationDelay: '300ms'}}></div>
-                  <div className="h-2 w-2 rounded-full bg-neutral-400 dark:bg-neutral-500 animate-bounce" style={{animationDelay: '600ms'}}></div>
+            </div>
+          )}
+          
+          {/* Chat messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.map(message => (
+              <div 
+                key={message.id} 
+                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={`
+                  flex max-w-[85%]
+                  ${message.sender === 'user' 
+                    ? 'flex-row-reverse' 
+                    : 'flex-row'
+                  }
+                `}>
+                  <div className={`
+                    flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center
+                    ${message.sender === 'user' 
+                      ? 'ml-2 bg-primary' 
+                      : 'mr-2 bg-neutral-200 dark:bg-neutral-700'
+                    }
+                  `}>
+                    {message.sender === 'user' 
+                      ? <User className="h-4 w-4 text-white" /> 
+                      : <Bot className="h-4 w-4 text-neutral-700 dark:text-neutral-200" />
+                    }
+                  </div>
+                  
+                  <div className={`
+                    rounded-lg p-3
+                    ${message.sender === 'user' 
+                      ? 'bg-primary text-white' 
+                      : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'
+                    }
+                    ${message.type !== 'text' ? 'max-w-[300px]' : ''}
+                  `}>
+                    {renderMessageContent(message)}
+                  </div>
+                </div>
+              </div>
+            ))}
+            
+            {/* Bot is typing indicator */}
+            {isTyping && (
+              <div className="flex justify-start">
+                <div className="flex max-w-[85%] flex-row">
+                  <div className="flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center mr-2 bg-neutral-200 dark:bg-neutral-700">
+                    <Bot className="h-4 w-4 text-neutral-700 dark:text-neutral-200" />
+                  </div>
+                  <div className="rounded-lg p-3 bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100">
+                    <div className="flex space-x-1">
+                      <div className="h-2 w-2 rounded-full bg-neutral-400 dark:bg-neutral-500 animate-bounce" style={{animationDelay: '0ms'}}></div>
+                      <div className="h-2 w-2 rounded-full bg-neutral-400 dark:bg-neutral-500 animate-bounce" style={{animationDelay: '300ms'}}></div>
+                      <div className="h-2 w-2 rounded-full bg-neutral-400 dark:bg-neutral-500 animate-bounce" style={{animationDelay: '600ms'}}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div ref={messagesEndRef} />
+          </div>
+          
+          {/* Quick suggestion buttons */}
+          <div className="px-4 py-2 bg-white dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700">
+            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
+              <Button variant="outline" size="sm" className="text-xs whitespace-nowrap" onClick={() => handleButtonClick("Find products")}>
+                <Search className="h-3 w-3 mr-1" />
+                Find Products
+              </Button>
+              <Button variant="outline" size="sm" className="text-xs whitespace-nowrap" onClick={() => handleButtonClick("Check order status")}>
+                <Package className="h-3 w-3 mr-1" />
+                Track Order
+              </Button>
+              <Button variant="outline" size="sm" className="text-xs whitespace-nowrap" onClick={() => handleButtonClick("Help with returns")}>
+                <RotateCcw className="h-3 w-3 mr-1" />
+                Returns
+              </Button>
+              <Button variant="outline" size="sm" className="text-xs whitespace-nowrap" onClick={() => handleButtonClick("Browse recent items")}>
+                <ShoppingBag className="h-3 w-3 mr-1" />
+                Recent Items
+              </Button>
+            </div>
+          </div>
+          
+          {/* Input area */}
+          <div className="border-t border-neutral-200 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800">
+            <form onSubmit={handleSubmit} className="flex items-center">
+              <Button type="button" variant="ghost" className="h-10 w-10 p-0 mr-1 rounded-full">
+                <Search className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
+              </Button>
+              <Input
+                placeholder="Type a message..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="flex-1 text-sm"
+              />
+              <Button type="submit" className="h-10 w-10 p-0 ml-1 rounded-full">
+                <SendHorizontal className="h-5 w-5" />
+              </Button>
+            </form>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="products" className="p-4 space-y-4 overflow-y-auto h-[calc(100%-64px)]">
+          <h3 className="font-medium text-sm mb-3">Featured Products</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {sampleProducts.map(product => (
+              <Card key={product.id} className="overflow-hidden border border-neutral-200 dark:border-neutral-700">
+                <div className="h-24 bg-neutral-100 dark:bg-neutral-800">
+                  <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                </div>
+                <div className="p-3">
+                  <h4 className="font-medium text-sm text-neutral-900 dark:text-white truncate">{product.name}</h4>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-300">${product.price.toFixed(2)}</p>
+                  <Button size="sm" className="w-full mt-2 text-xs">Add to Cart</Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+          
+          <h3 className="font-medium text-sm mb-3 mt-6">Recently Viewed</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {sampleProducts.slice(0, 2).map(product => (
+              <Card key={product.id} className="overflow-hidden border border-neutral-200 dark:border-neutral-700">
+                <div className="h-24 bg-neutral-100 dark:bg-neutral-800">
+                  <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                </div>
+                <div className="p-3">
+                  <h4 className="font-medium text-sm text-neutral-900 dark:text-white truncate">{product.name}</h4>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-300">${product.price.toFixed(2)}</p>
+                  <Button size="sm" className="w-full mt-2 text-xs">Add to Cart</Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="orders" className="p-4 space-y-4 overflow-y-auto h-[calc(100%-64px)]">
+          <h3 className="font-medium text-sm mb-3">Your Orders</h3>
+          <Card className="p-3 border border-neutral-200 dark:border-neutral-700 mb-4">
+            <div className="mb-3 flex justify-between items-start">
+              <div>
+                <h4 className="font-medium">Order #{sampleOrder.id}</h4>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                  Placed on {sampleOrder.date.toLocaleDateString()}
+                </p>
+              </div>
+              <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">
+                Shipped
+              </Badge>
+            </div>
+            
+            <div className="space-y-2 mb-3">
+              {sampleOrder.items.map((item, index) => (
+                <div key={index} className="flex items-center text-sm">
+                  <div className="w-10 h-10 flex-shrink-0 mr-2 bg-neutral-100 dark:bg-neutral-800 rounded overflow-hidden">
+                    <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <p className="font-medium">{item.product.name}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">Qty: {item.quantity}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="border-t border-neutral-200 dark:border-neutral-700 pt-2 mt-2">
+              <p className="text-sm font-medium">Tracking Information</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                Tracking #: {sampleOrder.tracking}
+              </p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                Estimated delivery: {sampleOrder.estimatedDelivery?.toLocaleDateString()}
+              </p>
+              <div className="mt-2 flex justify-between">
+                <Button variant="outline" size="sm" className="text-xs">
+                  <Package className="mr-1 h-3 w-3" />
+                  Track Package
+                </Button>
+                <Button variant="ghost" size="sm" className="text-xs">
+                  <RotateCcw className="mr-1 h-3 w-3" />
+                  Return Items
+                </Button>
+              </div>
+            </div>
+          </Card>
+          
+          <Card className="p-3 border border-neutral-200 dark:border-neutral-700">
+            <div className="mb-3 flex justify-between items-start">
+              <div>
+                <h4 className="font-medium">Order #ORD-67890</h4>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                  Placed on {new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                </p>
+              </div>
+              <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                Delivered
+              </Badge>
+            </div>
+            
+            <div className="space-y-2 mb-3">
+              <div className="flex items-center text-sm">
+                <div className="w-10 h-10 flex-shrink-0 mr-2 bg-neutral-100 dark:bg-neutral-800 rounded overflow-hidden">
+                  <img src={sampleProducts[1].image} alt={sampleProducts[1].name} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <p className="font-medium">{sampleProducts[1].name}</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Qty: 1</p>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+            
+            <div className="border-t border-neutral-200 dark:border-neutral-700 pt-2 mt-2">
+              <div className="mt-2 flex justify-end">
+                <Button variant="ghost" size="sm" className="text-xs">
+                  <RotateCcw className="mr-1 h-3 w-3" />
+                  Return Items
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </TabsContent>
         
-        <div ref={messagesEndRef} />
-      </div>
-      
-      {/* Input area */}
-      <div className="border-t border-neutral-200 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800">
-        <form onSubmit={handleSubmit} className="flex items-center">
-          <Button type="button" variant="ghost" className="h-10 w-10 p-0 mr-1 rounded-full">
-            <Search className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
-          </Button>
-          <Input
-            placeholder="Type a message..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="flex-1 text-sm"
-          />
-          <Button type="submit" className="h-10 w-10 p-0 ml-1 rounded-full">
-            <SendHorizontal className="h-5 w-5" />
-          </Button>
-        </form>
-      </div>
+        <TabsContent value="help" className="p-4 space-y-4 overflow-y-auto h-[calc(100%-64px)]">
+          <h3 className="font-medium text-sm mb-3">How Can We Help?</h3>
+          
+          <div className="space-y-3">
+            <Card className="p-3 hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer border border-neutral-200 dark:border-neutral-700">
+              <div className="flex items-center">
+                <div className="h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mr-3">
+                  <RotateCcw className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm">Returns & Refunds</h4>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Request returns and track refunds</p>
+                </div>
+              </div>
+            </Card>
+            
+            <Card className="p-3 hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer border border-neutral-200 dark:border-neutral-700">
+              <div className="flex items-center">
+                <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mr-3">
+                  <Package className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm">Order Issues</h4>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Missing items or delivery problems</p>
+                </div>
+              </div>
+            </Card>
+            
+            <Card className="p-3 hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer border border-neutral-200 dark:border-neutral-700">
+              <div className="flex items-center">
+                <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mr-3">
+                  <ShoppingBag className="h-4 w-4 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm">Product Support</h4>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Usage guides and troubleshooting</p>
+                </div>
+              </div>
+            </Card>
+            
+            <Card className="p-3 hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer border border-neutral-200 dark:border-neutral-700">
+              <div className="flex items-center">
+                <div className="h-8 w-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mr-3">
+                  <User className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm">Contact Human Agent</h4>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Speak with our customer service team</p>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
