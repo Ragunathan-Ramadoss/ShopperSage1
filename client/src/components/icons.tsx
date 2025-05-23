@@ -12,7 +12,13 @@ import {
   ThumbsUp,
   TrendingUp,
   Bot,
-  UserCircle
+  UserCircle,
+  Package,
+  RotateCcw,
+  Search,
+  SendHorizontal,
+  ArrowRight,
+  User
 } from "lucide-react";
 import { SiShopify } from "react-icons/si";
 
@@ -31,5 +37,11 @@ export {
   TrendingUp,
   Bot,
   UserCircle,
-  SiShopify
+  SiShopify,
+  Package,
+  RotateCcw,
+  Search,
+  SendHorizontal,
+  ArrowRight,
+  User
 };

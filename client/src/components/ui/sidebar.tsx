@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
-import { Home, ShoppingBag, Users, BarChart2, Settings, UserCircle } from "../icons";
+import { Home, ShoppingBag, Users, BarChart2, Settings, UserCircle, HelpCircle, Bot } from "../icons";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -28,6 +28,16 @@ export function Sidebar({ className, ...props }: SidebarProps) {
       title: "Analytics",
       href: "/analytics",
       icon: BarChart2,
+    },
+    {
+      title: "API Docs",
+      href: "/api-docs",
+      icon: HelpCircle,
+    },
+    {
+      title: "Chatbot Demo",
+      href: "/chatbot-demo",
+      icon: Bot,
     },
     {
       title: "Settings",
